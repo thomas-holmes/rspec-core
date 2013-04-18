@@ -468,9 +468,6 @@ EOS
             include Module.new {
               example_group.const_set(:NamedSubjectPreventSuper, self)
             }
-
-            # Expose `define_method` as a public method, so we can
-            # easily use it below.
           end
 
           example_group.__send__(:include, mod)
