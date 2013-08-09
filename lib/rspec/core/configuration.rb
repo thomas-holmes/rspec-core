@@ -121,6 +121,10 @@ module RSpec
       # Load files matching this pattern (default: `'**/*_spec.rb'`)
       add_setting :pattern, :alias_with => :filename_pattern
 
+      # Expose Rspec.current_example as the provided name
+      # within the example group
+      add_setting :expose_current_running_example_as
+
       def pattern= value
         if @spec_files_loaded
           Kernel.warn "WARNING: Configuring `pattern` to #{value} has no effect since RSpec has already loaded the spec files. Called from #{caller.first}"
