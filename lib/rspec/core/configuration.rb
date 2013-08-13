@@ -121,9 +121,26 @@ module RSpec
       # Load files matching this pattern (default: `'**/*_spec.rb'`)
       add_setting :pattern, :alias_with => :filename_pattern
 
-      # Expose Rspec.current_example as the provided name
-      # within the example group
-      add_setting :expose_current_running_example_as
+      # Adds a method that exposes the example being executed.
+      #
+      # @example
+      #
+      #     RSpec.configure do |c|
+      #       c.expose_current_running_example_as :example
+      #     end
+      #
+      #     describe MyClass do
+      #       it "accesses the example object", :foo => "bar" do
+      #         example.metadata[:foo] # => "bar"
+      #
+      #         # ...
+      #       end
+      #     end
+      #
+      # @see RSpec.current_example
+      def expose_current_running_example_as(name)
+        RSpec::Core::ExampleGroup.expose_current_running_example_as(name)
+      end
 
       def pattern= value
         if @spec_files_loaded

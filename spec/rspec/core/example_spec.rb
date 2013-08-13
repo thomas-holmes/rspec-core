@@ -470,4 +470,23 @@ describe RSpec::Core::Example, :parent_metadata => 'sample' do
       expect(current_examples).to eq([example1, example2])
     end
   end
+
+  describe "aliasing the current example" do
+    after do
+      RSpec::Core::ExampleGroup.module_eval do
+        undef :my_custom_example_method if method_defined? :my_custom_example_method
+      end
+    end
+
+    it "the aliased method exposes the example that is currently running" do
+      RSpec::Core::ExampleGroup.expose_current_running_example_as :my_custom_example_method
+      group = RSpec::Core::ExampleGroup.describe("an example group")
+
+      current_example = nil
+      example = group.example("example") { current_example = my_custom_example_method }
+
+      group.run
+      expect(current_example).to eq(example)
+    end
+  end
 end

@@ -1383,6 +1383,21 @@ module RSpec::Core
       end
     end
 
+    describe "#expose_current_running_example_as" do
+      after do
+        RSpec::Core::ExampleGroup.module_eval do
+          undef :my_example_method if method_defined? :my_example_method
+        end
+      end
+
+      it "exposes the current running example as a method" do
+        config.expose_current_running_example_as :my_example_method
+
+        group = ExampleGroup.describe("group")
+        expect(group.new).to respond_to(:my_example_method)
+      end
+    end
+
     describe "#reset" do
       it "clears the reporter" do
         expect(config.reporter).not_to be_nil
