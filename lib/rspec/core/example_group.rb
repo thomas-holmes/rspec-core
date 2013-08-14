@@ -129,6 +129,17 @@ module RSpec
           (class << self; self; end).define_example_method name, extra
         end
 
+        # Adds a method that exposes the example being executed.
+        #
+        # @see RSpec.current_example
+        def expose_current_running_example_as(name)
+          module_eval(<<-END_RUBY, __FILE__, __LINE__)
+            def #{name}
+              RSpec.current_example
+            end
+          END_RUBY
+        end
+
         # @private
         # @macro [attach] define_nested_shared_group_method
         #
@@ -293,27 +304,11 @@ module RSpec
         @top_level ||= superclass == ExampleGroup
       end
 
-      def self.set_current_example_ivar()
-        return unless RSpec.configuration.expose_current_running_example_as?
-        name = RSpec.configuration.expose_current_running_example_as
-
-        module_eval(<<-END_RUBY, __FILE__, __LINE__)
-          def #{name}
-            RSpec.current_example
-          end
-
-          def #{name}=(current_example)
-            RSpec.current_example = current_example
-          end
-        END_RUBY
-      end
-
       # @private
       def self.ensure_example_groups_are_configured
         unless defined?(@@example_groups_configured)
           RSpec.configuration.configure_mock_framework
           RSpec.configuration.configure_expectation_framework
-          set_current_example_ivar
           @@example_groups_configured = true
         end
       end
